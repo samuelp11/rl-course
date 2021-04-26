@@ -76,22 +76,17 @@ def epsilon_greedy(bandit, timesteps):
         #probability to take random action: eps 
         if var_random <= eps:
             # do random action
-            a = random.choice(possible_arms)
-            # sum up reward for played arm
-            rewards[a] += bandit.play_arm(a)
-            # increase amount of arm plays by one
-            n_plays[a] += 1
-            # compute sample-average action-value estimates
-            Q[a] = rewards[a] / n_plays[a]
+            a = random.choice(possible_arms)    
             
         else:
             a = np.argmax(Q) #assume there is only one 'best' action because of random selection
-            # sum up reward for played arm
-            rewards[a] += bandit.play_arm(a)
-            # increase amount of arm plays by one
-            n_plays[a] += 1
-            # compute sample-average action-value estimates
-            Q[a] = rewards[a] / n_plays[a]            
+        
+        # sum up reward for played arm
+        rewards[a] += bandit.play_arm(a)
+        # increase amount of arm plays by one
+        n_plays[a] += 1
+        # compute sample-average action-value estimates
+        Q[a] = rewards[a] / n_plays[a]            
 
 
 def main():
@@ -121,13 +116,10 @@ def main():
     plt.legend()
     plt.xlabel("Timesteps")
     plt.ylabel("Reward")
+    plt.savefig('bandit_strategies.png')
     plt.savefig('bandit_strategies.eps')
     plt.show()
 
 
 if __name__ == "__main__":
     main()
-
-#n_timesteps = 1000
-#b = GaussianBandit()  # initializes a random bandit
-#greedy(b, n_timesteps)
