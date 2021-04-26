@@ -28,24 +28,74 @@ def greedy(bandit, timesteps):
     possible_arms = range(bandit.n_arms)
 
     # TODO: init variables (rewards, n_plays, Q) by playing each arm once
+    # iterate over range of bandit arms
+    for a in possible_arms:
+        # every arm is played once
+        n_plays[a] = 1 # n_plays[a] += 1 is possible as well
+        # get reward by playing arm
+        rewards[a] = bandit.play_arm(a)
+        # compute sample-average action-value estimates
+        Q[a] = rewards[a] / n_plays[a]
 
     # Main loop
     while bandit.total_played < timesteps:
-        # This example shows how to play a random arm:
-        a = random.choice(possible_arms)
-        reward_for_a = bandit.play_arm(a)
         # TODO: instead do greedy action selection
         # TODO: update the variables (rewards, n_plays, Q) for the selected arm
+        a = np.argmax(Q) #assume there is only one 'best' action because of random selection
+        # sum up reward for played arm
+        rewards[a] += bandit.play_arm(a)
+        # increase amount of arm plays by one
+        n_plays[a] += 1
+        # compute sample-average action-value estimates
+        Q[a] = rewards[a] / n_plays[a]
+        
 
 
 def epsilon_greedy(bandit, timesteps):
     # TODO: epsilon greedy action selection (you can copy your code for greedy as a starting point)
+    rewards = np.zeros(bandit.n_arms)
+    n_plays = np.zeros(bandit.n_arms)
+    Q = np.zeros(bandit.n_arms)
+    possible_arms = range(bandit.n_arms)
+    # init epsilon
+    eps = 0.1
+
+    # TODO: init variables (rewards, n_plays, Q) by playing each arm once
+    # iterate over range of bandit arms
+    for a in possible_arms:
+        # every arm is played once
+        n_plays[a] = 1 # n_plays[a] += 1 is possible as well
+        # get reward by playing arm
+        rewards[a] = bandit.play_arm(a)
+        # compute sample-average action-value estimates
+        Q[a] = rewards[a] / n_plays[a]
+
+    # Main loop
     while bandit.total_played < timesteps:
-        reward_for_a = bandit.play_arm(0)  # Just play arm 0 as placeholder
+        var_random = np.random.uniform(0, 1)
+        #probability to take random action: eps 
+        if var_random <= eps:
+            # do random action
+            a = random.choice(possible_arms)
+            # sum up reward for played arm
+            rewards[a] += bandit.play_arm(a)
+            # increase amount of arm plays by one
+            n_plays[a] += 1
+            # compute sample-average action-value estimates
+            Q[a] = rewards[a] / n_plays[a]
+            
+        else:
+            a = np.argmax(Q) #assume there is only one 'best' action because of random selection
+            # sum up reward for played arm
+            rewards[a] += bandit.play_arm(a)
+            # increase amount of arm plays by one
+            n_plays[a] += 1
+            # compute sample-average action-value estimates
+            Q[a] = rewards[a] / n_plays[a]            
 
 
 def main():
-    n_episodes = 500  # TODO: set to 10000 to decrease noise in plot
+    n_episodes = 10000  # TODO: set to 10000 to decrease noise in plot
     n_timesteps = 1000
     rewards_greedy = np.zeros(n_timesteps)
     rewards_egreedy = np.zeros(n_timesteps)
@@ -77,3 +127,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#n_timesteps = 1000
+#b = GaussianBandit()  # initializes a random bandit
+#greedy(b, n_timesteps)
