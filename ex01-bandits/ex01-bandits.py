@@ -88,7 +88,11 @@ def epsilon_greedy(bandit, timesteps):
         Q[a] = rewards[a] / n_plays[a]
 
 def UCB1(bandit, timesteps):
-    # TODO: epsilon greedy action selection (you can copy your code for greedy as a starting point)
+    # possible improved methods:
+    #   -   decaying epsilon
+    #   -   optimized initialization
+    #   -   ubc
+
     rewards = np.zeros(bandit.n_arms)
     n_plays = np.zeros(bandit.n_arms)
     Q = np.zeros(bandit.n_arms)
@@ -123,7 +127,7 @@ def UCB1(bandit, timesteps):
 
 def main():
     n_episodes = 10000  # TODO: set to 10000 to decrease noise in plot
-    n_timesteps = 3000
+    n_timesteps = 1000
     rewards_greedy = np.zeros(n_timesteps)
     rewards_egreedy = np.zeros(n_timesteps)
     rewards_ucb1 = np.zeros(n_timesteps)
@@ -148,6 +152,7 @@ def main():
     rewards_egreedy /= n_episodes
     rewards_ucb1 /= n_episodes
 
+    mean_u = np.mean(rewards_ucb1.reshape((100,10)))
     plt.plot(rewards_greedy, label="greedy")
     print("Total reward of greedy strategy averaged over " + str(n_episodes) + " episodes: " + str(
         np.sum(rewards_greedy)))
@@ -157,6 +162,7 @@ def main():
     plt.plot(rewards_ucb1, label="ucb1")
     print("Total reward of epsilon greedy strategy averaged over " + str(n_episodes) + " episodes: " + str(
         np.sum(rewards_ucb1)))
+
     plt.legend()
     plt.xlabel("Timesteps")
     plt.ylabel("Reward")
