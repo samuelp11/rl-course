@@ -12,7 +12,7 @@ custom_map3x3 = [
 env = gym.make("FrozenLake-v0", desc=custom_map3x3)
 
 #TODO: Uncomment the following line to try the default map (4x4):
-env = gym.make("FrozenLake-v0")
+#env = gym.make("FrozenLake-v0")
 
 # Uncomment the following lines for even larger maps:
 # random_map = generate_random_map(size=5, p=0.8)
@@ -69,6 +69,8 @@ def bruteforce_policies():
     rep = len(env.desc)*len(env.desc)
     progress_ind = 0
     progress = 0
+    '''
+    for 4x4 map
     for p in itertools.product(d,d,d,d,d,d,d,d,d,d,d,d,d,d):
         policy = np.array([0,p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9],p[10],p[11],p[12],p[13],0])
         if progress_ind != policy[6]:
@@ -82,7 +84,8 @@ def bruteforce_policies():
             else:
                 optimalpolicies = [np.copy(policy)]
                 optimalvalue = value
-    ''''
+    '''
+    
     for p in itertools.product(d, repeat=rep):
         policy = np.array(p)
         value = value_policy(policy)
@@ -92,7 +95,7 @@ def bruteforce_policies():
             else:
                 optimalpolicies = [np.copy(policy)]
                 optimalvalue = value
-    '''
+
 
     print("Optimal value function:")
     print(optimalvalue)
