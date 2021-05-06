@@ -10,6 +10,11 @@ env = gym.make("FrozenLake-v0")
 #random_map = gym.envs.toy_text.frozen_lake.generate_random_map(size=5, p=0.8)
 #env = gym.make("FrozenLake-v0", desc=random_map)
 
+#4 possible action for grid world
+# 0 - left
+# 1 - down
+# 2 - right
+# 3 - up
 
 # Init some useful variables:
 n_states = env.observation_space.n
@@ -19,6 +24,7 @@ n_actions = env.action_space.n
 def value_iteration():
     #initialize value function for all , theta and gamma
     V_states = np.zeros(n_states)  # init values as zero
+    V_actions = np.zeros(n_states)
     theta = 1e-8
     #set gamma to value between 0 and 1
     #the bigger gamma the longer the convergence take
@@ -38,6 +44,8 @@ def value_iteration():
         for state in range(n_states):
             #initalize helper variable to identify greedy action for each state
             V_s_max = 0
+            #identify best action for each state
+            V_a_max = 0
             #iterate over actions 
             for action in range(n_actions):
                 #initalize value function dependent on state
@@ -63,15 +71,44 @@ def value_iteration():
                 # only take the best value function (best action)
                 if V_s > V_s_max:
                     V_s_max = V_s
-            #update value function array
+                    V_a_max = action
+                    
+            #update value function / arg value function array
             V_states[state] = V_s_max
+            V_actions[state] = V_a_max
         #update delta 
         delta = max(0, np.linalg.norm(v - V_states))
         #make sure that loop is able to terminate
         if counter == 10000:
             break
+            
+        #compute policy
+        #start is at state 0
+        state = 0
+        #initialiye policy array
+        policy = []
+        policy.append(state)
+        ct = 0
+        while state != 15:
+            ct += 1
+            if state <= 15 and state >= 0:
+                action = V_actions[state]
+            else:
+                break
+            if action == 0:
+                state -= 1
+            elif action == 1:
+                state += 4
+            elif action == 2:
+                state += 1
+            elif action == 3:
+                state -= 4
+                
+            policy.append(state)
+            if ct == 100:
+                break            
     
-    return 0, V_states, counter
+    return V_actions, V_states, counter, gamma, policy
     
                 
 
@@ -83,15 +120,24 @@ def main():
     print("")
 
     # run the value iteration
-    policy, value_fcn_opt, convergence_steps = value_iteration()
+    arg_value_fcn_opt, value_fcn_opt, convergence_steps, gamma, policy = value_iteration()
     
     print("Optimal value function:")
-    print(value_fcn_opt)
+    print(value_fcn_opt[0:4])
+    print(value_fcn_opt[4:8])
+    print(value_fcn_opt[8:12])
+    print(value_fcn_opt[12:16])
+    print("Optimal value function arguments:")
+    print(arg_value_fcn_opt[0:4])
+    print(arg_value_fcn_opt[4:8])
+    print(arg_value_fcn_opt[8:12])
+    print(arg_value_fcn_opt[12:16])    
     print("Amount of steps for convergence")
     print(convergence_steps)
     print("Computed policy:")
     print(policy)
-
+    print("gamma:")
+    print(gamma)
     # This code can be used to "rollout" a policy in the environment:
     """print ("rollout policy:")
     maxiter = 100
