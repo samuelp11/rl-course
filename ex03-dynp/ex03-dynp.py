@@ -28,15 +28,16 @@ def value_iteration():
     theta = 1e-8
     #set gamma to value between 0 and 1
     #the bigger gamma the longer the convergence take
-    gamma = 0.9
+    gamma = 0.8
     
     #set delta to check tolerance
-    delta = 1e-7
+    delta = np.inf
     #set counter
     counter = 0
     # TODO: implement the value iteration algorithm and return the policy
     # Hint: env.P[state][action] gives you tuples (p, n_state, r, is_terminal), which tell you the probability p that you end up in the next state n_state and receive reward r
     # while loop goes as long as tolerance is not reached
+    #print(env.P[14][2])
     while delta > theta:
         counter += 1 #count number of iterations until convergence
         v = V_states.copy() #store 'old' state values
@@ -56,18 +57,10 @@ def value_iteration():
                         p = env.P[state][action][i][0]
                         #store the next state
                         next_state = env.P[state][action][i][1]
-                        #check if next state if not terminal
-                        if not env.P[state][action][i][3]:
-                            #store the reward
-                            r = env.P[state][action][i][2]
-                        #if terminal state has value 15 it is the goal, so the reward is 1
-                        elif state == 15:
-                            r = 1
-                        #else it is a hole so the reward is 0
-                        else: 
-                            r = 0
+                        #store rewards
+                        r = env.P[state][action][i][2]
                         #compute the sum over all value functions for each state, action pair
-                        V_s = V_s + (r + gamma * p * V_states[next_state])
+                        V_s = V_s + p * (r + gamma * V_states[next_state])
                 # only take the best value function (best action)
                 if V_s > V_s_max:
                     V_s_max = V_s
@@ -82,6 +75,53 @@ def value_iteration():
         if counter == 10000:
             break
             
+    return V_actions, V_states, counter, gamma
+    
+
+def main():
+    # print the environment
+    print("current environment: ")
+    env.render()
+    print("")
+
+    # run the value iteration
+    arg_value_fcn_opt, value_fcn_opt, convergence_steps, gamma = value_iteration()
+    
+    print("Optimal value function:")
+    print(value_fcn_opt[0:4])
+    print(value_fcn_opt[4:8])
+    print(value_fcn_opt[8:12])
+    print(value_fcn_opt[12:16])
+    print("Computed policy:")
+    print(arg_value_fcn_opt[0:4])
+    print(arg_value_fcn_opt[4:8])
+    print(arg_value_fcn_opt[8:12])
+    print(arg_value_fcn_opt[12:16])    
+    print("Amount of steps for convergence")
+    print(convergence_steps)
+    print("gamma:")
+    print(gamma)
+    # This code can be used to "rollout" a policy in the environment:
+    """print ("rollout policy:")
+    maxiter = 100
+    state = env.reset()
+    for i in range(maxiter):
+        new_state, reward, done, info = env.step(policy[state])
+        env.render()
+        state=new_state
+        if done:
+            print ("Finished episode")
+            break"""
+            
+
+
+
+if __name__ == "__main__":
+    main()
+     
+    
+'''
+        #how to go not complete
         #compute policy
         #start is at state 0
         state = 0
@@ -106,50 +146,5 @@ def value_iteration():
                 
             policy.append(state)
             if ct == 100:
-                break            
-    
-    return V_actions, V_states, counter, gamma, policy
-    
-                
-
-
-def main():
-    # print the environment
-    print("current environment: ")
-    env.render()
-    print("")
-
-    # run the value iteration
-    arg_value_fcn_opt, value_fcn_opt, convergence_steps, gamma, policy = value_iteration()
-    
-    print("Optimal value function:")
-    print(value_fcn_opt[0:4])
-    print(value_fcn_opt[4:8])
-    print(value_fcn_opt[8:12])
-    print(value_fcn_opt[12:16])
-    print("Optimal value function arguments:")
-    print(arg_value_fcn_opt[0:4])
-    print(arg_value_fcn_opt[4:8])
-    print(arg_value_fcn_opt[8:12])
-    print(arg_value_fcn_opt[12:16])    
-    print("Amount of steps for convergence")
-    print(convergence_steps)
-    print("Computed policy:")
-    print(policy)
-    print("gamma:")
-    print(gamma)
-    # This code can be used to "rollout" a policy in the environment:
-    """print ("rollout policy:")
-    maxiter = 100
-    state = env.reset()
-    for i in range(maxiter):
-        new_state, reward, done, info = env.step(policy[state])
-        env.render()
-        state=new_state
-        if done:
-            print ("Finished episode")
-            break"""
-
-
-if __name__ == "__main__":
-    main()
+                break    
+''' 
