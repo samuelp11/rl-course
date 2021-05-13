@@ -3,6 +3,9 @@ import numpy as np
 
 # Init environment
 env = gym.make("FrozenLake-v0")
+
+env = gym.make("FrozenLake-v0", map_name="8x8")
+#also works with a 8x8 environment.
 # you can set it to deterministic with:
 # env = gym.make("FrozenLake-v0", is_slippery=False)
 
@@ -88,11 +91,13 @@ def main():
     arg_value_fcn_opt, value_fcn_opt, convergence_steps, gamma = value_iteration()
     
     print("Optimal value function:")
+    print(value_fcn_opt)
     print(value_fcn_opt[0:4])
     print(value_fcn_opt[4:8])
     print(value_fcn_opt[8:12])
     print(value_fcn_opt[12:16])
     print("Computed policy:")
+    print(arg_value_fcn_opt)
     print(arg_value_fcn_opt[0:4])
     print(arg_value_fcn_opt[4:8])
     print(arg_value_fcn_opt[8:12])
